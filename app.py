@@ -20,11 +20,11 @@ def auth():
                 ('client_id', config.APP_ID),
                 ('redirect_uri', 'https://facebook-kecilin.herokuapp.com/auth/'),
                 ('scope', 'user_profile,user_media'),
-                ('response_type', 'code'),)
-            response = requests.get('https://api.instagram.com/oauth/authorize%20', params=params)
-            # response = requests.get('https://api.instagram.com/oauth/authorize?client_id=self.app_id&redirect_uri=self.redirect_uri&scope=user_profile,user_media&response_type=code')
+                ('response_type', 'code')),
+        response = requests.get('https://api.instagram.com/oauth/authorize%20', params=params)
+        # response = requests.get('https://api.instagram.com/oauth/authorize?client_id=self.app_id&redirect_uri=self.redirect_uri&scope=user_profile,user_media&response_type=code')
             
-            return redirect(response)
+        return redirect(response)
 
     
 # @app.route('/callback', methods=['GET'])
