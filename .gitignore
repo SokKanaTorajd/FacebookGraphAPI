@@ -1,0 +1,7 @@
+# Folders
+.env
+.vscode
+*__pycache__
+
+# Files
+*.example
