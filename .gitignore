@@ -2,6 +2,11 @@
 .env
 .vscode
 *__pycache__
+instagram-scraper/
+static/
 
 # Files
 *.example
+fb-permissions.txt
+t.py
+tes.py
