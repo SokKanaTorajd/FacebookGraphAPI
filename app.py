@@ -10,14 +10,13 @@ import os, requests
 import config
 
 # INITIATE
-mongo_uri = os.environ.get('MONGODB_URI')
 db = os.environ.get('DB_NAME')
 top_media_collection = os.environ.get('COLLECTION_TOP_MEDIA')
 recent_media_collection = os.environ.get('COLLECTION_RECENT_MEDIA')
 top_comments_collection = os.environ.get('COLLECTION_TOP_COMMENTS')
 recent_comments_collection = os.environ.get('COLLECTION_RECENT_COMMENTS')
 
-mongodb = MongoDBModel(db, mongo_uri)
+mongodb = MongoDBModel(db)
 fb_api = FacebookAPI(config.USER_TOKEN)
 
 # SCRAPING MEDIA BASED ON HASHTAG
