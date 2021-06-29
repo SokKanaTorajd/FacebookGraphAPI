@@ -1,9 +1,10 @@
 from pymongo import MongoClient
+import os
 
 class MongoDBModel(object):
 
-    def __init__(self, database, MONGO_URI):
-        self.client = MongoClient(MONGO_URI)
+    def __init__(self, database):
+        self.client = MongoClient(os.environ.get('MONGODB_URI'))
         self.database = database
     
     def insert(self, data, collection):
