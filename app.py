@@ -23,7 +23,7 @@ fb_api = FacebookAPI(config.USER_TOKEN)
 hashtag = 'sobatbumn'
 hashtag_id = fb_api.getHashtagId(config.LUCKY_ID, hashtag)
 top_media = fb_api.getHashtagTopMedia(config.LUCKY_ID, hashtag_id['data']['id'])
-recent_media = fb_api.getHashtagRecentMedia(config.LUCKY_ID, hashtag_id['data']['id'])
+recent_media = fb_api.getHashtagRecentMedia(config.LUCKY_ID, hashtag_id['data'][0]['id'])
 
 # SAVE SCRAPED DATA INTO DATABASE
 for media in top_media:
