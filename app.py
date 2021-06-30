@@ -51,17 +51,18 @@ for data in top_media_links:
     post = Post.from_shortcode(loader.context, shortcode[4])
     sleep(2)
     comments = post.get_comments()
-    replies = []
-    for reply in field.answers:
-        reply = {
-            'id': reply.id,
-            'text': reply.text,
-            'created_at_utc': reply.created_at_utc,
-            'username': reply.owner.username,
-            'likes_count': reply.likes_count
-        }
-        replies.append(reply)
+    
     for field in comments:
+        replies = []
+        for reply in field.answers:
+            reply = {
+                'id': reply.id,
+                'text': reply.text,
+                'created_at_utc': reply.created_at_utc,
+                'username': reply.owner.username,
+                'likes_count': reply.likes_count
+            }
+            replies.append(reply)
         data = {
             'ig_post_permalink': permalink,
             'comment_id': field.id,
