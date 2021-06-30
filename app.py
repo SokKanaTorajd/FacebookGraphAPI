@@ -11,10 +11,15 @@ import config
 
 # INITIATE
 db = os.environ.get('DB_NAME')
-top_media_collection = os.environ.get('COLLECTION_TOP_MEDIA')
+# db = 'kecilin-intern'
+# top_media_collection = os.environ.get('COLLECTION_TOP_MEDIA')
+# top_comments_collection = os.environ.get('COLLECTION_TOP_COMMENTS')
+# top_media_collection = 'ig-posts-top-media'
+
 recent_media_collection = os.environ.get('COLLECTION_RECENT_MEDIA')
-top_comments_collection = os.environ.get('COLLECTION_TOP_COMMENTS')
 recent_comments_collection = os.environ.get('COLLECTION_RECENT_COMMENTS')
+# recent_media_collection = 'ig-posts-recent-media'
+
 
 mongodb = MongoDBModel(db)
 fb_api = FacebookAPI(config.USER_TOKEN)
@@ -22,12 +27,13 @@ fb_api = FacebookAPI(config.USER_TOKEN)
 # SCRAPING MEDIA BASED ON HASHTAG
 hashtag = 'sobatbumn'
 hashtag_id = fb_api.getHashtagId(config.LUCKY_ID, hashtag)
-top_media = fb_api.getHashtagTopMedia(config.LUCKY_ID, hashtag_id['data'][0]['id'])
+print(hashtag_id)
+# top_media = fb_api.getHashtagTopMedia(config.LUCKY_ID, hashtag_id['data'][0]['id'])
 recent_media = fb_api.getHashtagRecentMedia(config.LUCKY_ID, hashtag_id['data'][0]['id'])
 
 # SAVE SCRAPED DATA INTO DATABASE
-for media in top_media:
-    mongodb.insert(media, top_media_collection)
+# for media in top_media:
+#     mongodb.insert(media, top_media_collection)
 
 for media in recent_media:
     mongodb.insert(media, recent_media_collection)
@@ -36,25 +42,25 @@ for media in recent_media:
 # SCRAPING FOR COMMENTS
 loader = Instaloader()
 loader.login(os.environ.get('LUCKY_USERNAME'), os.environ.get('LUCKY_PASS'))
-top_media_links = mongodb.getIgPermalink(top_media_collection)
+# top_media_links = mongodb.getIgPermalink(top_media_collection)
 
-for data in top_media_links:
-    permalink = data['permalink']
-    shortcode = permalink.split('/')
-    post = Post.from_shortcode(loader.context, shortcode[4])
-    sleep(2)
-    comments = post.get_comments()
-    for field in comments:
-        data = {
-            'ig_post_permalink': permalink,
-            'comment_id': field.id,
-            'text': field.text,
-            'created_at_utc': field.created_at_utc,
-            'username': field.owner.username,
-            'likes_count': field.likes_count
-        }
-        mongodb.insert(data, top_comments_collection)
-    sleep(3)
+# for data in top_media_links:
+#     permalink = data['permalink']
+#     shortcode = permalink.split('/')
+#     post = Post.from_shortcode(loader.context, shortcode[4])
+#     sleep(2)
+#     comments = post.get_comments()
+#     for field in comments:
+#         data = {
+#             'ig_post_permalink': permalink,
+#             'comment_id': field.id,
+#             'text': field.text,
+#             'created_at_utc': field.created_at_utc,
+#             'username': field.owner.username,
+#             'likes_count': field.likes_count
+#         }
+#         mongodb.insert(data, top_comments_collection)
+#     sleep(3)
 
 recent_media_links = mongodb.getIgPermalink(recent_media_collection)
 
