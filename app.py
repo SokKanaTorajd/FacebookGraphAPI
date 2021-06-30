@@ -42,58 +42,26 @@ mongodb = MongoDBModel(db)
 # SCRAPING FOR COMMENTS
 loader = Instaloader()
 loader.login(os.environ.get('LUCKY_USERNAME'), os.environ.get('LUCKY_PASS'))
-# top_media_links = mongodb.getIgPermalink(top_media_collection)
+top_media_links = mongodb.getIgPermalink(top_media_collection)
 
-# for data in top_media_links:
-#     permalink = data['permalink']
-#     shortcode = permalink.split('/')
-#     post = Post.from_shortcode(loader.context, shortcode[4])
-#     sleep(2)
-#     comments = post.get_comments()
-#     replies = []
-#     for reply in field.answers:
-#         reply = {
-#             'id': reply.id,
-#             'text': reply.text,
-#             'created_at_utc': reply.created_at_utc,
-#             'username': reply.owner.username,
-#             'likes_count': reply.likes_count
-#         }
-#         replies.append(reply)
-#     for field in comments:
-#         data = {
-#             'ig_post_permalink': permalink,
-#             'comment_id': field.id,
-#             'text': field.text,
-#             'created_at_utc': field.created_at_utc,
-#             'username': field.owner.username,
-#             'likes_count': field.likes_count,
-#             'answers': replies,
-#             'shortcode': post.shortcode
-#         }
-#         mongodb.insert(data, top_comments_collection)
-#     sleep(3)
-
-recent_media_links = mongodb.getIgPermalink(recent_media_collection)
-
-for data in recent_media_links:
+for data in top_media_links:
     permalink = data['permalink']
+    print(permalink) # add this line for viewing logs
     shortcode = permalink.split('/')
     post = Post.from_shortcode(loader.context, shortcode[4])
     sleep(2)
     comments = post.get_comments()
+    replies = []
+    for reply in field.answers:
+        reply = {
+            'id': reply.id,
+            'text': reply.text,
+            'created_at_utc': reply.created_at_utc,
+            'username': reply.owner.username,
+            'likes_count': reply.likes_count
+        }
+        replies.append(reply)
     for field in comments:
-        replies = []
-        for reply in field.answers:
-            reply = {
-                'id': reply.id,
-                'text': reply.text,
-                'created_at_utc': reply.created_at_utc,
-                'username': reply.owner.username,
-                'likes_count': reply.likes_count
-            }
-            replies.append(reply)
-        
         data = {
             'ig_post_permalink': permalink,
             'comment_id': field.id,
@@ -104,8 +72,41 @@ for data in recent_media_links:
             'answers': replies,
             'shortcode': post.shortcode
         }
-        mongodb.insert(data, recent_comments_collection)
+        mongodb.insert(data, top_comments_collection)
     sleep(3)
+
+# recent_media_links = mongodb.getIgPermalink(recent_media_collection)
+
+# for data in recent_media_links:
+#     permalink = data['permalink']
+#     shortcode = permalink.split('/')
+#     post = Post.from_shortcode(loader.context, shortcode[4])
+#     sleep(2)
+#     comments = post.get_comments()
+#     for field in comments:
+#         replies = []
+#         for reply in field.answers:
+#             reply = {
+#                 'id': reply.id,
+#                 'text': reply.text,
+#                 'created_at_utc': reply.created_at_utc,
+#                 'username': reply.owner.username,
+#                 'likes_count': reply.likes_count
+#             }
+#             replies.append(reply)
+        
+#         data = {
+#             'ig_post_permalink': permalink,
+#             'comment_id': field.id,
+#             'text': field.text,
+#             'created_at_utc': field.created_at_utc,
+#             'username': field.owner.username,
+#             'likes_count': field.likes_count,
+#             'answers': replies,
+#             'shortcode': post.shortcode
+#         }
+#         mongodb.insert(data, recent_comments_collection)
+#     sleep(3)
 
 
 
