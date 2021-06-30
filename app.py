@@ -12,8 +12,8 @@ import config
 # INITIATE
 db = os.environ.get('DB_NAME')
 # db = 'kecilin-intern'
-# top_media_collection = os.environ.get('COLLECTION_TOP_MEDIA')
-# top_comments_collection = os.environ.get('COLLECTION_TOP_COMMENTS')
+top_media_collection = os.environ.get('COLLECTION_TOP_MEDIA')
+top_comments_collection = os.environ.get('COLLECTION_TOP_COMMENTS')
 # top_media_collection = 'ig-posts-top-media'
 
 recent_media_collection = os.environ.get('COLLECTION_RECENT_MEDIA')
@@ -22,21 +22,21 @@ recent_comments_collection = os.environ.get('COLLECTION_RECENT_COMMENTS')
 
 
 mongodb = MongoDBModel(db)
-fb_api = FacebookAPI(config.USER_TOKEN)
+# fb_api = FacebookAPI(config.USER_TOKEN)
 
-# SCRAPING MEDIA BASED ON HASHTAG
-hashtag = 'sobatbumn'
-hashtag_id = fb_api.getHashtagId(config.LUCKY_ID, hashtag)
-print(hashtag_id)
+# # SCRAPING MEDIA BASED ON HASHTAG
+# hashtag = 'sobatbumn'
+# hashtag_id = fb_api.getHashtagId(config.LUCKY_ID, hashtag)
+# print(hashtag_id)
 # top_media = fb_api.getHashtagTopMedia(config.LUCKY_ID, hashtag_id['data'][0]['id'])
-recent_media = fb_api.getHashtagRecentMedia(config.LUCKY_ID, hashtag_id['data'][0]['id'])
+# recent_media = fb_api.getHashtagRecentMedia(config.LUCKY_ID, hashtag_id['data'][0]['id'])
 
-# SAVE SCRAPED DATA INTO DATABASE
+# # SAVE SCRAPED DATA INTO DATABASE
 # for media in top_media:
 #     mongodb.insert(media, top_media_collection)
 
-for media in recent_media:
-    mongodb.insert(media, recent_media_collection)
+# for media in recent_media:
+#     mongodb.insert(media, recent_media_collection)
 
 
 # SCRAPING FOR COMMENTS
@@ -50,6 +50,16 @@ loader.login(os.environ.get('LUCKY_USERNAME'), os.environ.get('LUCKY_PASS'))
 #     post = Post.from_shortcode(loader.context, shortcode[4])
 #     sleep(2)
 #     comments = post.get_comments()
+#     replies = []
+#     for reply in field.answers:
+#         reply = {
+#             'id': reply.id,
+#             'text': reply.text,
+#             'created_at_utc': reply.created_at_utc,
+#             'username': reply.owner.username,
+#             'likes_count': reply.likes_count
+#         }
+#         replies.append(reply)
 #     for field in comments:
 #         data = {
 #             'ig_post_permalink': permalink,
@@ -57,7 +67,9 @@ loader.login(os.environ.get('LUCKY_USERNAME'), os.environ.get('LUCKY_PASS'))
 #             'text': field.text,
 #             'created_at_utc': field.created_at_utc,
 #             'username': field.owner.username,
-#             'likes_count': field.likes_count
+#             'likes_count': field.likes_count,
+#             'answers': replies,
+#             'shortcode': post.shortcode
 #         }
 #         mongodb.insert(data, top_comments_collection)
 #     sleep(3)
@@ -72,7 +84,7 @@ for data in recent_media_links:
     comments = post.get_comments()
     for field in comments:
         replies = []
-        for reply in field.anwers:
+        for reply in field.answers:
             reply = {
                 'id': reply.id,
                 'text': reply.text,
