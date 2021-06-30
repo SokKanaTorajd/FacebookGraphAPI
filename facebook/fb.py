@@ -214,8 +214,12 @@ class FacebookAPI(object):
             ('q', hashtag_name),
             ('access_token', self.access_token),)
         response = requests.get('https://graph.facebook.com/v10.0/ig_hashtag_search', params=params)
-
-        return response.json()
+        response = response.json()
+        try:
+            if response['data'][0]['id']:
+                return response
+        except KeyError:
+            return response
     
     def getHashtagTopMedia(self, ig_id, hashtag_id):
         """
