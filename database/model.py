@@ -5,6 +5,7 @@ class MongoDBModel(object):
 
     def __init__(self, database):
         self.client = MongoClient(os.environ.get('MONGODB_URI'))
+        # self.client = MongoClient()
         self.database = database
     
     def insert(self, data, collection):
