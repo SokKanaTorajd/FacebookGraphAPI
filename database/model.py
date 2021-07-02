@@ -5,7 +5,6 @@ class MongoDBModel(object):
 
     def __init__(self, database):
         self.client = MongoClient(os.environ.get('MONGODB_URI'))
-        # self.client = MongoClient()
         self.database = database
     
     def insert(self, data, collection):
@@ -16,6 +15,7 @@ class MongoDBModel(object):
         db = self.client[self.database]
         query = {'id':1, '_id':0}
         data = db[collection].find({}, query)
+        return data
 
     def getIgPermalink(self, collection):
         db = self.client[self.database]
