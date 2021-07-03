@@ -10,8 +10,15 @@ Tes ini hanya ditujukun untuk mengambil semua
 Dengan catatan IG ID dan Access Token sudah tersedia.
 """""
 
-api = FacebookAPI(config.TAMA_TOKEN)
-id = config.TAMA_IG_ID
+token_bumn_kota_malang = 'EAANmWNRMCPQBAKclZAxyjNJ2R3gBa4WML0YQ3MBtjgNAGRkaotsRVG3CkzSAGS0fD98vQlvti8j7AL6bsQ5c6w4nZB2WX0bU6vAj5VZBf3ZBIZCsSTmclzBAQzQ99VAxI0xPwbJ2I8ZAZBEaOJ31LvUxcVh7GZABEV9Qq2Fqqh6TAZBJVMZBMgWwimuQdYinsIm5w7wZBz1DGCbocHZAlOMioPGk6u99hjTN6g5SbJFpZAK0gCCK2RMszfIpK'
+fb_id = '195075655824180' # Nur Hadi
+page_id_bumn_kota_malang = '101163835217927'
+ig_id = '17841445014200240'
+
+
+
+api = FacebookAPI(token_bumn_kota_malang)
+# id = config.TAMA_IG_ID
 client = MongoClient()
 
 def inputData(db_name, collection, data):
@@ -33,14 +40,15 @@ def checkExistingDocs(db_name, collection, field, value):
         return True
 
 db_name = 'kecilin-intern'
-comment_collection = 'tama-post-comment'
-post_collection = 'tama-ig_media'
+comment_collection = 'post-bumn-kota-malang'
+post_collection = 'comment-bumn-kota-malang'
 field_permalink = 'permalink'
 field_mediaID = 'id'
 field_comment_mediaID = 'media_id'
 
-tama_medias = api.getIgMediaObjects(id)
-for media in tama_medias:
+# fb_id = api.get_fbID()
+all_media = api.getIgMediaObjects(ig_id)
+for media in all_media:
     inputData(db_name, post_collection, media)
     print('media inserted')
 
