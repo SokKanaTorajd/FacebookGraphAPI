@@ -113,17 +113,13 @@ class FacebookAPI(object):
 
     def getIgMediaObjects(self, ig_id:str):
         """
-        Mengembalikan semua ID dari Objek IG Media
+        Mengembalikan ID, caption, jumlah komen, jumlah like, tipe_media, permalink, 
+            timestamp, username dan owner dari Objek IG Media milik User.
         --Output Example
         {
             "data": [
                 {"id": <id-objek-1>},
                 {"id": <id-objek-2>},
-                {"id": <id-objek-3>},
-                {"id": <id-objek-4>},
-                {"id": <id-objek-5>},
-                {"id": <id-objek-6>},
-                ...
             ],
             "paging": {
                 "cursors": {
@@ -134,9 +130,10 @@ class FacebookAPI(object):
                 "next": "https://graph.facebook.com/v10.0/<user-id>/media?access_token=self.access_token&pretty=0&limit=25&after=<key-cursor-after>"
             }
         }
+        reference: https://developers.facebook.com/docs/instagram-api/reference/ig-media
         """
         params = (
-            ('fields', 'id,caption,comments_count,like_count,media_type,permalink,timestamp'),
+            ('fields', 'id,caption,comments_count,like_count,media_type,permalink,timestamp,username,owner'),
             ('access_token', self.access_token),
             ('limit', 50),)
         url = 'https://graph.facebook.com/v10.0/{}/media'.format(ig_id)
@@ -168,11 +165,38 @@ class FacebookAPI(object):
 
     def getIgComments(self, media_id):
         """
-        return a list of comments from user's instagram account.
-        Each data in comments contain of id(comment_id),text,timestamp,username,like_count
+        mengembalikan daftar komentar pada sebuah objek media Instagram yang dimiliki user.
+        tiap data dalam daftar tersebut terdapat data id(comment_id),text,timestamp,username,like_count
+        --Output:
+        mengembalikan id(id komentar), text, timestamp, username, replies(balasan komentar), dan like_count.
+        {
+            'data': [
+                {
+                    "id": "<komen-id>",
+                    "text": "<komentar>",
+                    "username": "<username-pemberi-komentar>",
+                    "like_count": <jumlah-like>,
+                    "replies": {
+                        "data": [
+                        {
+                            "timestamp": "2020-03-14T06:32:25+0000",
+                            "text": "<balasan>",
+                            "id": "<id-balasan>"
+                        },
+                        .....
+                        ]
+                    },
+                    "media": {
+                        "id": "<media-id>"
+                    },
+                    "timestamp": "2020-03-14T06:30:28+0000"
+                }
+            ]
+        }
+        - reference: https://developers.facebook.com/docs/instagram-api/reference/ig-media/comments#read
         """
         params = (
-            ('fields', 'id,text,timestamp,username,like_count'),
+            ('fields', 'id,text,timestamp,username,replies,like_count,media'),
             ('access_token', self.access_token),
             ('limit', 50),)
         url = 'https://graph.facebook.com/{}/comments'.format(media_id)
@@ -204,10 +228,13 @@ class FacebookAPI(object):
 
     def getHashtagId(self, ig_id, hashtag_name):
         """
-        returns object: 
+        mengembalikan id hashtag yang sifatnya statis dan global. \
+        contoh: #bluebottle selalu memiliki ID 17843857450040591.
+        --Output: 
         {
             "data": [{"id": "hashtag_id"}]
         }
+        reference: https://developers.facebook.com/docs/instagram-api/reference/ig-hashtag-search
         """
         params = (
             ('user_id', ig_id),
@@ -223,8 +250,25 @@ class FacebookAPI(object):
     
     def getHashtagTopMedia(self, ig_id, hashtag_id):
         """
-        return a list of instagram posts contain of id, caption, comments_count, 
-            like_count, media_type, permalink, and timestamp.
+        mengembalikan daftar video atau gambar paling populer yang disertai hashtag/tagar tertentu.
+
+        --Output:
+        mengembalikan id, caption, comments_count, like_count, media_type, permalink, dan timestamp.
+        {
+            'data': [
+                {
+                    'id':'<id-post-1>',
+                    'caption':'<caption>',
+                    'comments_count':'<jumlah komen>',
+                    'like_count':'<jumlah like>',
+                    'media_type':'<IMAGE/VIDEO/CARAOUSEL_ALBUM>',
+                    'permalink':'<permalink>',
+                    'timestamp':'<timestamp>'
+                },
+                .......
+            ]
+        }
+        -reference: https://developers.facebook.com/docs/instagram-api/reference/ig-hashtag/top-media
         """
         params = (
             ('user_id', ig_id),
@@ -261,8 +305,27 @@ class FacebookAPI(object):
     
     def getHashtagRecentMedia(self, ig_id, hashtag_id):
         """
-        returns a list of of instagram posts based on recent timeline uploaded by users.
-        each data in the list contains id, caption, like_count, comments_count, media_type, permalink, timestamp.
+        mengembalikan daftar foto dan video terbaru objek Media Instagram dengan tagar tertentu.
+        hanya mengembalikan objek media yang diterbitkan dalam 24 jam setelah eksekusi kueri ini.
+        tanggapan tidak selalu dalam urutan kronologis.
+        
+        --output:
+        mengembalikan id, caption, comments_count, like_count, media_type, permalink, dan timestamp.
+        {
+            'data': [
+                {
+                    'id':'<id-post-1>',
+                    'caption':'<caption>',
+                    'comments_count':'<jumlah komen>',
+                    'like_count':'<jumlah like>',
+                    'media_type':'<IMAGE/VIDEO/CARAOUSEL_ALBUM>',
+                    'permalink':'<permalink>',
+                    'timestamp':'<timestamp>'
+                },
+                .......
+            ]
+        }
+        reference: https://developers.facebook.com/docs/instagram-api/reference/ig-hashtag/recent-media
         """
         params = (
             ('user_id', ig_id),
@@ -286,7 +349,7 @@ class FacebookAPI(object):
                         response = response.json()
                         for media in response['data']:
                             recent_medias.append(media)
-                            print(media)
+                            # print(media)
                         sleep(5)
                     if len(response['data']) == 0:
                         break
