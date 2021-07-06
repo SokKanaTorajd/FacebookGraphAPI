@@ -1,3 +1,4 @@
+from instaloader.exceptions import BadResponseException
 from database.model import MongoDBModel
 # import requests, json
 from time import sleep
@@ -191,31 +192,36 @@ for url in all_links:
     if existed == True:
         print('The comments with url {} is already scraped.'.format(link))
 
-    if existed == False:
-        code = link.split('/')
-        post = Post.from_shortcode(loader.context, code[4])
-        sleep(5)
-        comments = post.get_comments()
-        scraped_comments = []
-        for field in comments:
-            if len(scraped_comments) <= 100:
-                data = {
-                    'comment_id' : field.id,
-                    'username': field.owner.username,
-                    'text': field.text,
-                    'timestamp' : field.created_at_utc,
-                    'likes_count': field.likes_count,
-                }
-                scraped_comments.append(data)
+    try:
+        if existed == False:
+            code = link.split('/')
+            post = Post.from_shortcode(loader.context, code[4])
+            sleep(5)
+            comments = post.get_comments()
+            scraped_comments = []
+            for field in comments:
+                if len(scraped_comments) <= 100:
+                    data = {
+                        'comment_id' : field.id,
+                        'username': field.owner.username,
+                        'text': field.text,
+                        'timestamp' : field.created_at_utc,
+                        'likes_count': field.likes_count,
+                    }
+                    scraped_comments.append(data)
 
-        post_comments = {
-            'post_permalink': link,
-            'comments' : scraped_comments,
-            'shortcode': post.shortcode
-        }
-        mongo.insert(post_comments, comment_coll)
-        print('comments from post {} has been scraped.'.format(link))
-        print('break for 30 seconds...')
-        sleep(30)
+            post_comments = {
+                'post_permalink': link,
+                'comments' : scraped_comments,
+                'shortcode': post.shortcode
+            }
+            mongo.insert(post_comments, comment_coll)
+            print('comments from post {} has been scraped.'.format(link))
+            print('break for 30 seconds...')
+            sleep(30)
+            
+    except BadResponseException:
+        print('The post with url {} has been deleted.'.format(link))
+        continue
 
     
