@@ -23,3 +23,11 @@ class MongoDBModel(object):
         data = db[collection].find({}, query)
         return data
     
+    def checkExistingDocs(self, collection, field, value):
+        db = self.client[self.database]
+        result = db[collection].find_one({field: value})
+        if result is None:
+            return False
+        else:
+            return True
+    
